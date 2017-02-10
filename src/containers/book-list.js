@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
+import { selectBook } from '../actions/index';
+import { bindActionCreators } from 'redux';
 
 class BookList extends Component {
   renderList(){
     return this.props.books.map((book) => {
       return(
-        <li className="list-group-item" key={book.title}>{book.title}</li>
-      )
-    })
-  }
-  renderPeople(){
-    return this.props.people.map((person) => {
-      console.log(person);
-      return(
-        <li className="list-group-item" key={person.user.name}>{person.user.name} | Age: {person.user.age}</li>
+        <li
+          onClick={() => this.props.selectBook(book)}
+          className="list-group-item"
+          key={book.title}
+          >{book.title}</li>
       )
     })
   }
@@ -24,9 +22,6 @@ class BookList extends Component {
         <ul className="list-group col-xs-4">
           {this.renderList()}
         </ul>
-        <ul className="list-group col-xs-8">
-          {this.renderPeople()}
-        </ul>
       </div>
     )
   }
@@ -35,9 +30,16 @@ class BookList extends Component {
 function mapStateToProps(state){
   //takes state and turns it to props
   return{
-    books: state.books,
-    people: state.people
+    books: state.books
   };
 }
 
-export default connect(mapStateToProps)(BookList);
+// Anything returned will end up as props on the BookList container
+function mapDispatchToProps(dispatch){
+  // Whenever selectBook is called, result should be passed to all reducers
+  return bindActionCreators({ selectBook: selectBook }, dispatch)
+  // this returns this.props.selectBook
+}
+
+// Promote BookList from Component to container
+export default connect(mapStateToProps, mapDispatchToProps)(BookList);
